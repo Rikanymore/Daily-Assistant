@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kişisel Yapay Zeka Asistanım</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: #2c3e50;
+            color: white;
+            padding: 25px 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: #6e8efb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background: #f9f9f9;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            margin: 10px 0;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .user {
+            align-self: flex-end;
+            background: #6e8efb;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot {
+            align-self: flex-start;
+            background: #e0e0e0;
+            color: #333;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+        
+        #userInput {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            outline: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        #userInput:focus {
+            border-color: #6e8efb;
+            box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.2);
+        }
+        
+        button {
+            background: #6e8efb;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        button:hover {
+            background: #5a7afa;
+            transform: scale(1.05);
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .feature-card i {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .feature-card h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .feature-card p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .reminder-list {
+            margin-top: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .reminder-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .reminder-item i {
+            margin-right: 10px;
+            color: #6e8efb;
+        }
+        
+        .timestamp {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            background: #e0e0e0;
+            padding: 12px 16px;
+            border-radius: 18px;
+            margin: 10px 0;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #888;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: bounce 1.3s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: 90vh;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-robot"></i> Kişisel Asistanım</h1>
+                <p>Günlük İşlerinizde Yardımcınız</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3><i class="fas fa-cloud-sun"></i> Hava Durumu</h3>
+                <p>"İstanbul hava durumu" yazarak öğrenebilirsiniz</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3><i class="fas fa-clock"></i> Saat & Tarih</h3>
+                <p>"Saat kaç" veya "Bugün günlerden ne" diye sorabilirsiniz</p>
+            </div>
+            
+            <div class="feature-card">
+                <h3><i class="fas fa-bell"></i> Hatırlatıcı</h3>
+                <p>"Hatırlatıcı ekle yarın toplantı" şeklinde ekleyebilirsiniz</p>
+            </div>
+            
+            <div class="reminder-list">
+                <h3><i class="fas fa-tasks"></i> Hatırlatıcılarınız</h3>
+                <div id="remindersContainer"></div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <i class="fas fa-comments"></i> Sohbet Asistanı
+            </div>
+            
+            <div id="chatbox">
+                <div class="message bot">
+                    Merhaba! Ben kişisel yapay zeka asistanınız. <br>
+                    Size günlük işlerinizde nasıl yardımcı olabilirim?
+                    <div class="timestamp">Şimdi</div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Bir şeyler yazın..." autocomplete="off">
+                <button id="sendButton" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elementleri
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const remindersContainer = document.getElementById('remindersContainer');
+        
+        // Örnek hatırlatıcılar
+        const sampleReminders = [
+            "Yarın saat 10:00'da toplantı",
+            "Faturaları ödeme",
+            "Alışveriş listesi hazırla"
+        ];
+        
+        // Sayfa yüklendiğinde hatırlatıcıları göster
+        window.onload = function() {
+            sampleReminders.forEach(reminder => {
+                addReminderToSidebar(reminder);
+            });
+        };
+        
+        // Mesaj gönderme fonksiyonu
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Kullanıcı mesajını göster
+            displayMessage(message, 'user');
+            
+            // Yazıyor animasyonunu göster
+            typingIndicator.style.display = 'block';
+            chatbox.scrollTop = chatbox.scrollHeight;
+            
+            // API'ye istek gönder
+            fetch('http://localhost:5000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Yazıyor animasyonunu gizle
+                typingIndicator.style.display = 'none';
+                
+                // Yanıtı göster
+                displayMessage(data.response, 'bot');
+                
+                // Hatırlatıcı eklenmişse güncelle
+                if (message.toLowerCase().includes('hatırlatıcı ekle')) {
+                    const reminder = message.replace('hatırlatıcı ekle', '').trim();
+                    if (reminder) {
+                        addReminderToSidebar(reminder);
+                    }
+                }
+            })
+            .catch(error => {
+                typingIndicator.style.display = 'none';
+                displayMessage('Üzgünüm, bir hata oluştu. Lütfen daha sonra tekrar deneyin.', 'bot');
+                console.error('Error:', error);
+            });
+            
+            // Input'u temizle ve odakla
+            userInput.value = '';
+            userInput.focus();
+        }
+        
+        // Mesajı ekranda gösterme fonksiyonu
+        function displayMessage(message, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.innerHTML = message;
+            
+            // Zaman damgası ekle
+            const now = new Date();
+            const timestamp = document.createElement('div');
+            timestamp.classList.add('timestamp');
+            timestamp.textContent = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+            msgDiv.appendChild(timestamp);
+            
+            chatbox.appendChild(msgDiv);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+        
+        // Hatırlatıcıyı sidebar'a ekleme fonksiyonu
+        function addReminderToSidebar(reminder) {
+            const reminderItem = document.createElement('div');
+            reminderItem.classList.add('reminder-item');
+            reminderItem.innerHTML = `
+                <i class="fas fa-bell"></i>
+                <div>
+                    ${reminder}
+                    <div class="timestamp">${new Date().toLocaleDateString()}</div>
+                </div>
+            `;
+            remindersContainer.appendChild(reminderItem);
+        }
+        
+        // Enter tuşu ile gönderme
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Örnek mesajlar (tasarımı göstermek için)
+        setTimeout(() => {
+            displayMessage("Bugün hava durumu nasıl?", 'user');
+            setTimeout(() => {
+                displayMessage("İstanbul için hava: açık, sıcaklık: 25°C", 'bot');
+            }, 1000);
+        }, 1500);
+    </script>
+</body>
+</html>
